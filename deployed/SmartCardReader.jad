@@ -1,0 +1,10 @@
+MIDlet-1: ReaderMidlet,/res/scr.png,at.ac.tuwien.mobile.ReaderMidlet
+MIDlet-Data-Size: 5400
+MIDlet-Jar-Size: 13553
+MIDlet-Jar-URL: SmartCardReader.jar
+MIDlet-Name: SmartCardReader
+MIDlet-Permissions: javax.microedition.rms, javax.microedition.midlet, javax.microedition.lcdui, javax.microedition.lcdui.game, javax.microedition.media, javax.microedition.media.control
+MIDlet-Vendor: ReDaFl
+MIDlet-Version: 1.0.0
+MicroEdition-Configuration: CLDC-1.1
+MicroEdition-Profile: MIDP-2.0
