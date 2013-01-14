@@ -48,6 +48,7 @@ public class ReaderForm extends Form implements CommandListener, InfoInterface, 
     }
 
     public void showState(String state) {
+        this.deleteAll();
         this.append("\n\nCurrent state:\n");
         this.append(state);
     }

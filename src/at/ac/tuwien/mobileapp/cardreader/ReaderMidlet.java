@@ -38,7 +38,7 @@ public class ReaderMidlet extends MIDlet {
 
         // start up bluetooth host and wait for incoming connections
         bluetooth = new BluetoothHost("cardreader", readerUi);
-        
+
         // start card reader
         reader = new CardReader(readerUi);
 
@@ -47,7 +47,7 @@ public class ReaderMidlet extends MIDlet {
                 byte[] b = new byte[4];
                 bluetooth.read(b);
                 String str = new String(b, ENC);
-                
+
                 // distinguish commands
                 if (str.startsWith("HELL")) {
                     cmdHello();
@@ -55,6 +55,12 @@ public class ReaderMidlet extends MIDlet {
                     cmdIsCardPresent();
                 } else if (str.startsWith("EXIT")) {
                     cmdExit();
+                } else if (str.startsWith("OPEN")) {
+                    cmdOpen();
+                } else if (str.startsWith("CLOS")) {
+                    cmdClose();
+                } else if (str.startsWith("APDU")) {
+                    cmdAPDU();
                 } else {
                     readerUi.showState(str);
                     // nerdy hex-output:
@@ -75,9 +81,9 @@ public class ReaderMidlet extends MIDlet {
     // handles CDPR event
     private void cmdIsCardPresent() throws UnsupportedEncodingException, IOException {
         bluetooth.write("ACK CDPR".getBytes(ENC));
-        if(reader.isCardPresent()) {
+        if (reader.isCardPresent()) {
             bluetooth.write("TRUE".getBytes(ENC));
-        } else{
+        } else {
             bluetooth.write("FALS".getBytes(ENC));
         }
         readerUi.showState("Processed CDPR event");
@@ -87,8 +93,34 @@ public class ReaderMidlet extends MIDlet {
     private void cmdExit() throws UnsupportedEncodingException, IOException {
         bluetooth.write("ACK EXIT".getBytes("UTF8"));
         readerUi.showState("Processed EXIT event");
+        reader.close();
         bluetooth.close();
         exitApp();
+    }
+
+    private void cmdOpen() throws UnsupportedEncodingException, IOException {
+        bluetooth.write("ACK OPEN".getBytes("UTF8"));
+        if (reader.open()) {
+            bluetooth.write("TRUE".getBytes(ENC));
+        } else {
+            bluetooth.write("FALS".getBytes(ENC));
+        }
+        readerUi.showState("Wating for a card to read...");
+    }
+
+    private void cmdClose() throws UnsupportedEncodingException, IOException {
+        bluetooth.write("ACK CLOS".getBytes("UTF8"));
+        reader.close(); 
+        readerUi.showState("CardReader Closed.");
+    }
+
+    private void cmdAPDU() throws UnsupportedEncodingException, IOException{
+        bluetooth.write("ACK APDU".getBytes("UTF8"));
+        byte[] msg = new byte[512]; //TODO set correct value
+        bluetooth.read(msg);
+        byte[] response = reader.sendAPDUCommand(msg);
+        bluetooth.write(response);
+        
     }
 
     public void pauseApp() {
