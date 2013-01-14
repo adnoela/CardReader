@@ -110,13 +110,17 @@ public class ReaderMidlet extends MIDlet {
 
     private void cmdClose() throws UnsupportedEncodingException, IOException {
         bluetooth.write("ACK CLOS".getBytes("UTF8"));
-        reader.close(); 
-        readerUi.showState("CardReader Closed.");
+        if (reader.close()) {
+            bluetooth.write("TRUE".getBytes(ENC));
+        } else {
+            bluetooth.write("FALS".getBytes(ENC));
+        }
+        readerUi.showState("CardReader Closed (DiscoveryManager & NFC Connections are removed).");
     }
 
     private void cmdAPDU() throws UnsupportedEncodingException, IOException{
         bluetooth.write("ACK APDU".getBytes("UTF8"));
-        byte[] msg = new byte[512]; //TODO set correct value
+        byte[] msg = new byte[32]; //TODO set correct value
         bluetooth.read(msg);
         byte[] response = reader.sendAPDUCommand(msg);
         bluetooth.write(response);

@@ -34,12 +34,13 @@ public class ReaderForm extends Form implements CommandListener, InfoInterface, 
 
     private void privateInit() {
 
-        this.setCommandListener(this);
 
         exitCommand = new Command("Exit", Command.EXIT, 1);
         this.addCommand(exitCommand);
 
         createMainUi();
+        this.setCommandListener(this);
+
 
     }
 

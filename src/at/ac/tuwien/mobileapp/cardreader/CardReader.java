@@ -40,8 +40,9 @@ public class CardReader implements ReaderInterface, TargetListener, TransactionL
         }
     }
 
-    public void close() {
+    public boolean close() {
         deleteNfcInstances(true);
+        return true;
     }
 
     private void deleteNfcInstances(boolean alsoRemoveDiscoveryManager) {
@@ -91,6 +92,7 @@ public class CardReader implements ReaderInterface, TargetListener, TransactionL
                     try {
                         if (classes[j].equals(Class.forName("javax.microedition.contactless.sc.ISO14443Connection")));
                         String url = prop[i].getUrl(classes[j]);
+                        callback.showState("Card attached");
                         return (ISO14443Connection) Connector.open(url);
                     } catch (ClassNotFoundException e) {
                         callback.displayAlert("ClassNotFoundException", e.getMessage(), AlertType.WARNING);

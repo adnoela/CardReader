@@ -13,7 +13,7 @@ public interface ReaderInterface {
 	/**
 	 * closes every open connection from the reader and itself as well 
 	 */
-	public void close();
+	public boolean close();
 	
 	/**
 	 * @return  true - if there is an open connection to a valid card
