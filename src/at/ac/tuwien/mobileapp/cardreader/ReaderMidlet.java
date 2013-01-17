@@ -1,6 +1,7 @@
 package at.ac.tuwien.mobileapp.cardreader;
 
 import at.ac.tuwien.mobileapp.bluetooth.BluetoothHost;
+import at.ac.tuwien.mobileapp.common.ByteHelper;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import javax.microedition.lcdui.Display;
@@ -41,7 +42,7 @@ public class ReaderMidlet extends MIDlet {
 
         // start card reader
         reader = new CardReader(readerUi);
-
+        
         while (true) {
             try {
                 byte[] b = new byte[4];
@@ -91,15 +92,15 @@ public class ReaderMidlet extends MIDlet {
 
     // handles EXIT event
     private void cmdExit() throws UnsupportedEncodingException, IOException {
-        bluetooth.write("ACK EXIT".getBytes("UTF8"));
+        bluetooth.write("ACK EXIT".getBytes(ENC));
         readerUi.showState("Processed EXIT event");
         reader.close();
         bluetooth.close();
         exitApp();
     }
-
+    
     private void cmdOpen() throws UnsupportedEncodingException, IOException {
-        bluetooth.write("ACK OPEN".getBytes("UTF8"));
+        bluetooth.write("ACK OPEN".getBytes(ENC));
         if (reader.open()) {
             bluetooth.write("TRUE".getBytes(ENC));
         } else {
@@ -107,9 +108,9 @@ public class ReaderMidlet extends MIDlet {
         }
         readerUi.showState("Wating for a card to read...");
     }
-
+    
     private void cmdClose() throws UnsupportedEncodingException, IOException {
-        bluetooth.write("ACK CLOS".getBytes("UTF8"));
+        bluetooth.write("ACK CLOS".getBytes(ENC));
         if (reader.close()) {
             bluetooth.write("TRUE".getBytes(ENC));
         } else {
@@ -117,23 +118,39 @@ public class ReaderMidlet extends MIDlet {
         }
         readerUi.showState("CardReader Closed (DiscoveryManager & NFC Connections are removed).");
     }
-
-    private void cmdAPDU() throws UnsupportedEncodingException, IOException{
-        bluetooth.write("ACK APDU".getBytes("UTF8"));
-        byte[] msg = new byte[32]; //TODO set correct value
-        bluetooth.read(msg);
-        byte[] response = reader.sendAPDUCommand(msg);
+    
+    private void cmdAPDU() throws UnsupportedEncodingException, IOException {
+        bluetooth.write("ACK APDU".getBytes(ENC));
+        // read length of command apdu
+        byte[] b = new byte[4];
+        bluetooth.read(b);
+        int commandAPDULength = ByteHelper.intFromByteArray(b);
+        readerUi.showState("Length of command: " + commandAPDULength);
+        // check if command length == 0 then abort
+        if(commandAPDULength <= 0) {
+            return;
+        }
+        //read command apdu
+        b = new byte[commandAPDULength];
+        bluetooth.read(b);
+        readerUi.showState("CommandAPDU: "+ByteHelper.arrayToHexString(b, true));
+        // precedure apdu
+        byte[] response = reader.sendAPDUCommand(b);
+        readerUi.showState("ResponseAPDU: "+ByteHelper.arrayToHexString(response, true));
+        // send length of response
+        readerUi.showState("Length of response: " + response.length);
+        bluetooth.write(ByteHelper.intToByteArray(response.length));
+        // send response apdu
         bluetooth.write(response);
-        
     }
-
+    
     public void pauseApp() {
     }
-
+    
     public void destroyApp(boolean unconditional) {
         readerUi.shutdown();
     }
-
+    
     public void exitApp() {
         destroyApp(false);
         notifyDestroyed();

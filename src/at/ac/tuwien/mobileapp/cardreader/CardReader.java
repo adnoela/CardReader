@@ -102,6 +102,8 @@ public class CardReader implements ReaderInterface, TargetListener, TransactionL
                 }
             }
         }
+        callback.showState("Couldn't establish a ISO14443-connection.");
+
         return null;
     }
 
