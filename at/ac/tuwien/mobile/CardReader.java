@@ -122,11 +122,6 @@ public class CardReader implements ReaderInterface, TargetListener, TransactionL
 		// do nothing
 	}
 
-	public byte[] getATR() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 	public String getName() {
 		return System.getProperty("microedition.platform");
 	}
