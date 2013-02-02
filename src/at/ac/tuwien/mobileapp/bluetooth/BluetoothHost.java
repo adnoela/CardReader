@@ -81,7 +81,7 @@ public class BluetoothHost implements SerialConnection {
             outputStream.write(b);
             outputStream.flush();
         } else {
-            throw new IOException("Output stream closed or not yet ready.");
+         throw new IOException("Output stream closed or not yet ready.");
         }
     }
 }

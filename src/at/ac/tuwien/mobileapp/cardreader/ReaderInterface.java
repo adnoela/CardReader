@@ -13,7 +13,7 @@ public interface ReaderInterface {
 	/**
 	 * closes every open connection from the reader and itself as well 
 	 */
-	public boolean close();
+	public void close();
 	
 	/**
 	 * @return  true - if there is an open connection to a valid card
@@ -32,12 +32,6 @@ public interface ReaderInterface {
 	 * @return name of the card reader
 	 */
 	public String getName();
-	
-	/**
-	 * @return tbd...
-	 */
-	public byte[] getATR();	
-
 	
 	
 }

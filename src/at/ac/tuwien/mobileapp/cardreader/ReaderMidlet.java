@@ -34,6 +34,7 @@ public class ReaderMidlet extends MIDlet {
         if (!initialized) {
             readerUi = new ReaderForm(this);
             readerUi.init();
+            initialized = true;
         }
         display.setCurrent(readerUi);
 
@@ -54,8 +55,6 @@ public class ReaderMidlet extends MIDlet {
                     cmdHello();
                 } else if (str.startsWith("CDPR")) {
                     cmdIsCardPresent();
-                } else if (str.startsWith("EXIT")) {
-                    cmdExit();
                 } else if (str.startsWith("OPEN")) {
                     cmdOpen();
                 } else if (str.startsWith("CLOS")) {
@@ -89,15 +88,6 @@ public class ReaderMidlet extends MIDlet {
         }
         readerUi.showState("Processed CDPR event");
     }
-
-    // handles EXIT event
-    private void cmdExit() throws UnsupportedEncodingException, IOException {
-        bluetooth.write("ACK EXIT".getBytes(ENC));
-        readerUi.showState("Processed EXIT event");
-        reader.close();
-        bluetooth.close();
-        exitApp();
-    }
     
     private void cmdOpen() throws UnsupportedEncodingException, IOException {
         bluetooth.write("ACK OPEN".getBytes(ENC));
@@ -111,12 +101,10 @@ public class ReaderMidlet extends MIDlet {
     
     private void cmdClose() throws UnsupportedEncodingException, IOException {
         bluetooth.write("ACK CLOS".getBytes(ENC));
-        if (reader.close()) {
-            bluetooth.write("TRUE".getBytes(ENC));
-        } else {
-            bluetooth.write("FALS".getBytes(ENC));
-        }
-        readerUi.showState("CardReader Closed (DiscoveryManager & NFC Connections are removed).");
+        readerUi.showState("Closing App...");
+        reader.close();
+        bluetooth.close();
+        exitApp();
     }
     
     private void cmdAPDU() throws UnsupportedEncodingException, IOException {

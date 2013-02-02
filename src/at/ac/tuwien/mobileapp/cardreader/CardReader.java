@@ -40,9 +40,8 @@ public class CardReader implements ReaderInterface, TargetListener, TransactionL
         }
     }
 
-    public boolean close() {
+    public void close() {
         deleteNfcInstances(true);
-        return true;
     }
 
     private void deleteNfcInstances(boolean alsoRemoveDiscoveryManager) {
@@ -133,11 +132,6 @@ public class CardReader implements ReaderInterface, TargetListener, TransactionL
 
     public void externalReaderDetected(byte arg0) {
         // do nothing
-    }
-
-    public byte[] getATR() {
-        // TODO Auto-generated method stub
-        return null;
     }
 
     public String getName() {

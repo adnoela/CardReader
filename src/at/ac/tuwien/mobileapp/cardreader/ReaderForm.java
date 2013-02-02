@@ -33,15 +33,11 @@ public class ReaderForm extends Form implements CommandListener, InfoInterface, 
     }
 
     private void privateInit() {
-
-
         exitCommand = new Command("Exit", Command.EXIT, 1);
         this.addCommand(exitCommand);
-
+System.out.println("privateInit");
         createMainUi();
         this.setCommandListener(this);
-
-
     }
 
     private void createMainUi() {
@@ -52,6 +48,7 @@ public class ReaderForm extends Form implements CommandListener, InfoInterface, 
         this.deleteAll();
         this.append("\n\nCurrent state:\n");
         this.append(state);
+        System.out.println("state: " + state);
     }
 
     public void shutdown() {
